@@ -40,6 +40,31 @@ provide you functions as expected, and you will help build a pipeline to deploy 
 # Udacity | Coworking Space Service - Project Solution
 # Cristian Cevasco
 
+## Tools and technologies used
+
+- AWS CodeBuild
+- AWS ECR (Elastic Container Registry)
+- Kubernetes (EKS)
+- Helm
+
+## Configuring the database and populating it
+
+The postgresql image used is `12.5.9`
+
+You can add the repo with the following command:
+`elm repo add <REPO_NAME> https://charts.bitnami.com/bitnami`
+
+Install the postgrsql chart:
+`helm install postgresql bitnami/postgresql --version 12.5.9`
+
+You can export the password by running:
+`export POSTGRES_PASSWORD=$(kubectl get secret --namespace default postgresql -o jsonpath="{.data.postgres-password}" | base64 -d)`
+
+To view the password run:
+`echo $POSTGRES_PASSWORD`
+
+You can run a port-forwarding and run the queries under the `db` directory to populate the database.
+
 ## AWS Instance Type Recommendation
 
 For this application, the AWS `t3a.small` instance type is recommended. It provides 2 vCPUs and 2GB of RAM, which should be sufficient for our application needs. 
@@ -55,3 +80,23 @@ For this application, the AWS `t3a.small` instance type is recommended. It provi
 4. **Monitor and Alert:** Set up monitoring and alerting to keep track of unused resources. AWS provides tools like Trusted Advisor and Cost Explorer to help identify them.
 
 5. **Database Optimization:** Ensure the database queries are optimized to reduce processing time and costs. Consider using caching mechanisms like Redis or Memcached to reduce repetitive and costly database operations.
+
+## Deployment Workflow
+
+1. Database Setup with Helm: We kick-start our deployment by initializing a PostgreSQL database using Helm, making it straightforward and reproducible.
+
+2. Image Build and Push: Post our application development; the code is packaged as a Docker container using a Dockerfile. This image is then built and pushed to ECR using AWS CodeBuild.
+
+3. Deployment to EKS: With our Docker image ready in ECR, Kubernetes steps in. Using our defined YAML configurations, we instruct Kubernetes to pull this image and deploy it.
+
+4. Logging with CloudWatch: Post deployment, all application logs are funneled into AWS CloudWatch, providing a centralized space for monitoring and debugging.
+
+##  Releasing New Builds
+
+1. Code Updates: Make the necessary changes to the codebase and create a merge request. Once the merge request is approved and merged, it will trigger the build of the image and posterior publishing to ECR.
+
+3. Update Kubernetes Deployment: If needed, modify the Kubernetes YAML configurations, especially if there are significant changes like environment variables or new services.
+
+4. Rolling Updates: Kubernetes supports rolling updates to ensure zero downtime. Apply the new configurations, and K8s will handle the rest.
+
+5. Monitor in CloudWatch: Post deployment, ensure everything is running smoothly by checking the logs in CloudWatch.
