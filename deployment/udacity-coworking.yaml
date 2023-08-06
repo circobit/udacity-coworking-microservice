@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: udacity-coworking
+data:
+  DB_USERNAME: "postgres"
+  DB_HOST: "postgresql"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: udacity-coworking
+  name: udacity-coworking
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: udacity-coworking
+  template:
+    metadata:
+      labels:
+        app: udacity-coworking
+    spec:
+      containers:
+      - image: 540289717348.dkr.ecr.us-west-2.amazonaws.com/udacity-coworking:0.0.1
+        name: udacity-coworking
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        env:
+        - name: DB_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: udacity-coworking
+              key: DB_USERNAME
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: udacity-coworking
+              key: DB_HOST
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: udacity
+              key: DB_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: udacity-coworking
+spec:
+  selector:
+    app: udacity-coworking
+  ports:
+    - protocol: TCP
+      port: 5153
+      targetPort: 5153
+  type: LoadBalancer
