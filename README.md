@@ -52,7 +52,7 @@ provide you functions as expected, and you will help build a pipeline to deploy 
 The postgresql image used is `12.5.9`
 
 You can add the repo with the following command:
-`elm repo add <REPO_NAME> https://charts.bitnami.com/bitnami`
+`helm repo add <REPO_NAME> https://charts.bitnami.com/bitnami`
 
 Install the postgrsql chart:
 `helm install postgresql bitnami/postgresql --version 12.5.9`
