@@ -64,6 +64,9 @@ To view the password run:
 `echo $POSTGRES_PASSWORD`
 
 You can run a port-forwarding and run the queries under the `db` directory to populate the database.
+Example of command for port-forwarding:
+`kubectl port-forward --namespace default svc/<SERVICE_NAME>-postgresql 5432:5432 &`
+`PGPASSWORD="$POSTGRES_PASSWORD" psql --host 127.0.0.1 -U postgres -d postgres -p 5432`
 
 ## AWS Instance Type Recommendation
 
@@ -100,3 +103,31 @@ For this application, the AWS `t3a.small` instance type is recommended. It provi
 4. Rolling Updates: Kubernetes supports rolling updates to ensure zero downtime. Apply the new configurations, and K8s will handle the rest.
 
 5. Monitor in CloudWatch: Post deployment, ensure everything is running smoothly by checking the logs in CloudWatch.
+
+## Screenshots
+
+### AWS CodeBuild - build triggered by GitHub push
+
+![1-codebuild-triggered](images/1-codebuild-triggered.png)
+
+### Image pushed to ECR
+
+![2-image-pushed](images/2-image-pushed.png)
+
+### Services and Pods listed
+
+![3-services-and-pods](images/3-services-and-pods.png)
+
+### Describe Services
+
+![4-describe-svc](images/4-describe-svc.png)
+
+### Describe Deployment
+
+![5-describe-deployment](images/5-describe-deployment.png)
+
+### Cloudwatch logs for EKS
+
+Cloudwatch logs in this case showing the logs for `kube-apiserver-*` filtered by the appication name.
+
+![6-cloudwatch-logs-eks](images/6-cloudwatch-logs-eks.png)
