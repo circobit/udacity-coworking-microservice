@@ -128,6 +128,6 @@ For this application, the AWS `t3a.small` instance type is recommended. It provi
 
 ### Cloudwatch logs for EKS
 
-Cloudwatch logs in this case showing the logs for `kube-apiserver-*` filtered by the appication name.
+Cloudwatch logs in this case showing the logs of the appication
 
 ![6-cloudwatch-logs-app](images/6-cloudwatch-logs-app.png)
